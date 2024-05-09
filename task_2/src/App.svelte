@@ -2,46 +2,77 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
   import Counter from './lib/Counter.svelte'
+
+  
+async function roll(cur="USD") {
+		const response = await fetch(`https://open.er-api.com/v6/latest/${cur}`);
+    const data = await response.json();
+    return data
+    	}
+
+let currencies =[
+]
+roll().then(data => {
+  currencies=Object.keys(data.rates); 
+});
+
+	let selected1;
+	let selected2;
+
+let ans1='';
+let ans2='';
+
+let obj1
+let obj2
+
+
+function handleChange(value, selected) {
+return value * selected
+}
+ 
 </script>
 
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+<input bind:value={ans1} on:input={() =>{
+  ans2 = handleChange(ans1,obj1[selected2])
 
-  <div class="card">
-    <Counter />
-  </div>
+  }}/>
+	<select
+		bind:value={selected1}
+  on:change={() => {
+    console.log(selected1);
+    roll(selected1).then(data => {
+      
+    obj1=data.rates; 
+});
+  }}
+	>
+		{#each currencies as currency}
+			<option value={currency}>
+				{currency}
+			</option>
+		{/each}
+	</select>
+  <br/>
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+<input bind:value={ans2} on:input={() =>{
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+  ans1= handleChange(ans2,obj2[selected1])}}/>
+	<select
+			bind:value={selected2}
+        on:change={() => {
+          roll(selected2).then(data => {
+          obj2=data.rates; });
+  }}
+	>
+		{#each currencies as currency}
+			<option value={currency}>
+				{currency}
+			</option>
+		{/each}
+	</select>
+
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
 </style>
