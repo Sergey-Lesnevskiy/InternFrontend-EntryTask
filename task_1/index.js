@@ -29,6 +29,6 @@ function encoding(encoded) {
     })
   });
 
-  return [...arr,...uniq];
+  return [...arr,'список уникальных id:',...uniq];
 }
 console.log(encoding(encoded));
